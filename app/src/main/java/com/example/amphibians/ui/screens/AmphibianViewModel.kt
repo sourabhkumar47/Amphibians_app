@@ -11,7 +11,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.amphibians.AmphibianPhotosApplication
 import com.example.amphibians.data.AmphibianPhotoRepository
-import com.example.amphibians.network.AmphibianPhoto
+import com.example.amphibians.network.Amphibian
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -20,7 +20,7 @@ import java.io.IOException
  * UI state for the [HomeScreen].
  */
 sealed interface AmphibianUiState {
-    data class Success(val photos: List<AmphibianPhoto>) : AmphibianUiState
+    data class Success(val photos: List<Amphibian>) : AmphibianUiState
     object Loading : AmphibianUiState
     object Error : AmphibianUiState
 }
