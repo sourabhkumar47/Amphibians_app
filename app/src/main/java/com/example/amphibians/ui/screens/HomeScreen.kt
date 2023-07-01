@@ -10,7 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    amphibianUiState: AmphibianUiState,
+    onRefresh: () -> Unit,
+    modifier: Modifier = Modifier
+) {
 
 }
 
@@ -20,7 +24,7 @@ fun PhotoGrid(modifier: Modifier = Modifier) {
         columns = GridCells.Fixed(1),
         modifier = modifier.fillMaxWidth(),
         contentPadding = PaddingValues(8.dp)
-    ){
+    ) {
         item {
             AmphibianPhotoCard()
         }
