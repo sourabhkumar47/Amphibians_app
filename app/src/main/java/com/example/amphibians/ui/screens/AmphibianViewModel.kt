@@ -32,6 +32,18 @@ class AmphibianViewModel(private val amphibianPhotoRepository: AmphibianPhotoRep
     var amphibianUiState: AmphibianUiState by mutableStateOf(AmphibianUiState.Loading)
         private set
 
+
+    /**
+     * Call [getAmphibiansDetails()] on init so we can display status immediately.
+     */
+    init {
+        getAmphibiansDetails()
+    }
+
+    /**
+     * Gets Mars photos information from the Mars API Retrofit service and updates the
+     * [AmphibianPhoto] [List] [MutableList].
+     */
     fun getAmphibiansDetails() {
         viewModelScope.launch {
             amphibianUiState = try {
