@@ -5,10 +5,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Amphibians(
-    val id: String,
+    val name : String,
+    val type:String,
+    val description:String,
     //To use variable names in your data class that
     // differ from the key names in the JSON response,
     // use the @SerialName annotation
-    @SerialName(value = "img_src")
+    @SerialName("img_src")
     val img_src: String,
 )
