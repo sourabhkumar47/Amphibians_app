@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -16,8 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.amphibians.R
+import com.example.amphibians.network.Amphibians
 
 
 @Composable
@@ -39,7 +43,21 @@ fun HomeScreen(
 
 @Composable
 fun AmphibianListScreen() {
-    TODO("Not yet implemented")
+    LazyColumn() {
+
+    }
+}
+
+@Composable
+fun AmphibianPhotoCard(amphibians: Amphibians, modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier,
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Column {
+            Text(stringResource(R.string.amphibian_title))
+        }
+    }
 }
 
 @Composable
@@ -74,12 +92,5 @@ fun PhotoGrid(modifier: Modifier = Modifier) {
         item {
             AmphibianPhotoCard()
         }
-    }
-}
-
-@Composable
-fun AmphibianPhotoCard(modifier: Modifier = Modifier) {
-    Card(modifier = modifier) {
-
     }
 }
