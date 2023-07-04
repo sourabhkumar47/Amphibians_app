@@ -20,7 +20,7 @@ import java.io.IOException
  * UI state for the [HomeScreen].
  */
 sealed interface AmphibianUiState {
-    data class Success(val photos: List<Amphibians>) : AmphibianUiState
+    data class Success(val amphibians: List<Amphibians>) : AmphibianUiState
     object Loading : AmphibianUiState
     object Error : AmphibianUiState
 }
