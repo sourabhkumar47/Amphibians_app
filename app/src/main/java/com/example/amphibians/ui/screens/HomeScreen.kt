@@ -1,21 +1,17 @@
-package com.example.amphibians.ui.screens
-
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,44 +29,49 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.amphibians.R
-import com.example.amphibians.network.Amphibian
+import com.example.amphibians.model.Amphibian
+import com.example.amphibians.ui.screens.AmphibiansUiState
+import com.example.amphibians.ui.theme.AmphibiansTheme
 
 @Composable
 fun HomeScreen(
-    amphibianUiState: AmphibianUiState,
-    onRefresh: () -> Unit,
+    amphibiansUiState: AmphibiansUiState,
+    retryAction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    when (amphibianUiState) {
-        is AmphibianUiState.Loading -> LoadingScreen()
-        is AmphibianUiState.Success -> AmphibiansListScreen(
-            amphibianUiState.photos,
-            modifier = modifier
-                .fillMaxSize()
-        )
-
-        is AmphibianUiState.Error -> ErrorScreen(onRetry = onRefresh)
+    when (amphibiansUiState) {
+        is AmphibiansUiState.Loading -> LoadingScreen(modifier.fillMaxSize().size(200.dp))
+        is AmphibiansUiState.Success ->
+            AmphibiansListScreen(amphibiansUiState.amphibians, modifier.fillMaxSize())
+        else -> ErrorScreen(retryAction, modifier.fillMaxSize())
     }
 }
 
+/**
+ * The home screen displaying the loading message.
+ */
 @Composable
-fun AmphibiansListScreen(amphibians: List<Amphibian>, modifier: Modifier = Modifier) {
-    LazyColumn(
+fun LoadingScreen(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(R.drawable.loading_img),
+        contentDescription = stringResource(R.string.loading),
+        modifier = modifier
+    )
+}
+
+/**
+ * The home screen displaying error message with re-attempt button.
+ */
+@Composable
+fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-        contentPadding = PaddingValues(16.dp)
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(
-            items = amphibians,
-            key = { amphibian ->
-                amphibian.name
-            }
-        ) { amphibian ->
-            AmphibianCard(
-                amphibian = amphibian,
-                modifier = modifier
-                    .fillMaxSize()
-            )
+        Text(stringResource(R.string.loading_failed))
+        Button(onClick = retryAction) {
+            Text(stringResource(R.string.retry))
         }
     }
 }
@@ -78,72 +80,88 @@ fun AmphibiansListScreen(amphibians: List<Amphibian>, modifier: Modifier = Modif
 fun AmphibianCard(amphibian: Amphibian, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        shape = RoundedCornerShape(8.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = stringResource(R.string.amphibian_title, amphibian.name, amphibian.type),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(18.dp),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Start
             )
-
             AsyncImage(
                 modifier = Modifier.fillMaxWidth(),
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(amphibian.imgSrc)
                     .crossfade(true)
                     .build(),
-                error = painterResource(R.drawable.error_48px),
-                placeholder = painterResource(R.drawable.hourglass_top_48px),
-                contentScale = ContentScale.FillWidth,
                 contentDescription = null,
+                contentScale = ContentScale.FillWidth,
+                error = painterResource(id = R.drawable.ic_broken_image),
+                placeholder = painterResource(id = R.drawable.loading_img)
             )
-
             Text(
                 text = amphibian.description,
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Justify,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(18.dp)
             )
-
         }
     }
 }
 
-
 @Composable
-fun ErrorScreen(onRetry: () -> Unit, modifier: Modifier = Modifier) {
-    Column(
+private fun AmphibiansListScreen(amphibians: List<Amphibian>, modifier: Modifier = Modifier) {
+    LazyColumn(
         modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+        contentPadding = PaddingValues(18.dp)
     ) {
-        IconButton(onClick = onRetry) {
-            Icon(imageVector = Icons.Filled.Refresh, contentDescription = "refresh")
+        items(
+            items = amphibians,
+            key = { amphibian ->
+                amphibian.name
+            }
+        ) { amphibian ->
+            AmphibianCard(amphibian = amphibian, modifier = Modifier.fillMaxSize())
         }
-        Text(text = "Please check your internet connection and try again")
     }
-}
-
-@Composable
-fun LoadingScreen() {
-    CircularProgressIndicator(progress = 1.5f)
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewAmphibianCard() {
-    AmphibianCard(
-        Amphibian(
-            name = "name",
-            type = "type",
-            description = "description",
-            imgSrc = "R.drawable.error_48px"
-        )
-    )
+fun LoadingScreenPreview() {
+    AmphibiansTheme {
+        LoadingScreen(Modifier.fillMaxSize().size(200.dp))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ErrorScreenPreview() {
+    AmphibiansTheme {
+        ErrorScreen({}, Modifier.fillMaxSize())
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AmphibiansListScreenPreview() {
+    AmphibiansTheme {
+        val mockData = List(10) {
+            Amphibian(
+                "Lorem Ipsum - $it",
+                "$it",
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do" +
+                        " eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad" +
+                        " minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip" +
+                        " ex ea commodo consequat.",
+                imgSrc = ""
+            )
+        }
+        AmphibiansListScreen(mockData, Modifier.fillMaxSize())
+    }
 }

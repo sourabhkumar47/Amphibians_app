@@ -1,5 +1,6 @@
 package com.example.amphibians
 
+import AmphibiansApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.amphibians.ui.AmphibianDetailsApp
 import com.example.amphibians.ui.theme.AmphibiansTheme
 
 class MainActivity : ComponentActivity() {
@@ -23,25 +23,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AmphibianDetailsApp()
+                    AmphibiansApp()
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AmphibiansTheme {
-        Greeting("Android")
     }
 }
