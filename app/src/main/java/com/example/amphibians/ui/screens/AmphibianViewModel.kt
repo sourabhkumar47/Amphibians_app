@@ -11,7 +11,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.amphibians.AmphibianPhotosApplication
 import com.example.amphibians.data.AmphibianRepository
-import com.example.amphibians.network.Amphibians
+import com.example.amphibians.network.Amphibian
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
@@ -20,7 +20,7 @@ import java.io.IOException
  * UI state for the [HomeScreen].
  */
 sealed interface AmphibianUiState {
-    data class Success(val amphibians: List<Amphibians>) : AmphibianUiState
+    data class Success(val amphibians: List<Amphibian>) : AmphibianUiState
     object Loading : AmphibianUiState
     object Error : AmphibianUiState
 }
@@ -42,7 +42,7 @@ class AmphibianViewModel(private val amphibianRepository: AmphibianRepository) :
 
     /**
      * Gets Mars photos information from the Mars API Retrofit service and updates the
-     * [Amphibians] [List] [MutableList].
+     * [Amphibian] [List] [MutableList].
      */
     fun getAmphibiansDetails() {
         viewModelScope.launch {

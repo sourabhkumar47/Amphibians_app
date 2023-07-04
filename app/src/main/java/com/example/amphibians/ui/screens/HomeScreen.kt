@@ -3,9 +3,11 @@ package com.example.amphibians.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -21,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.amphibians.R
-import com.example.amphibians.network.Amphibians
+import com.example.amphibians.network.Amphibian
 
 
 @Composable
@@ -32,8 +34,8 @@ fun HomeScreen(
 ) {
     when (amphibianUiState) {
         is AmphibianUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
-        is AmphibianUiState.Success -> AmphibianListScreen(
-
+        is AmphibianUiState.Success -> AmphibiansListScreen(
+            amphibianUiState.amphibians, modifier.fillMaxWidth()
         )
 
         is AmphibianUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())
@@ -42,28 +44,39 @@ fun HomeScreen(
 
 
 @Composable
-fun AmphibianListScreen() {
-    LazyColumn() {
-
+private fun AmphibiansListScreen(amphibians: List<Amphibian>, modifier: Modifier = Modifier) {
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(24.dp),
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        items(
+            items = amphibians,
+            key = { amphibian ->
+                amphibian.name
+            }
+        ) { amphibian ->
+            AmphibianDetailsCard(amphibian = amphibian, modifier = Modifier.fillMaxSize())
+        }
     }
 }
 
 @Composable
-fun AmphibianPhotoCard(amphibians: Amphibians, modifier: Modifier = Modifier) {
+fun AmphibianDetailsCard(amphibian: Amphibian, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(8.dp)
     ) {
         Column {
             Text(
-                text = stringResource(R.string.amphibian_title, amphibians.name, amphibians.type),
+                text = stringResource(R.string.amphibian_title, amphibian.name, amphibian.type),
                 modifier = modifier
                     .fillMaxWidth()
             )
 
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(amphibians.img_src)
+                    .data(amphibian.img_src)
                     .crossfade(true)
                     .build(),
                 contentDescription = null,
@@ -72,7 +85,7 @@ fun AmphibianPhotoCard(amphibians: Amphibians, modifier: Modifier = Modifier) {
             )
 
             Text(
-                text = amphibians.description
+                text = amphibian.description
             )
 
         }
