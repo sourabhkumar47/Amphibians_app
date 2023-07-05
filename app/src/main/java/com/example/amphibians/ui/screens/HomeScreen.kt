@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -13,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,9 +36,10 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     when (amphibiansUiState) {
-        is AmphibiansUiState.Loading -> LoadingScreen(modifier.fillMaxSize().size(200.dp))
+        is AmphibiansUiState.Loading -> LoadingScreen()
         is AmphibiansUiState.Success ->
             AmphibiansListScreen(amphibiansUiState.amphibians, modifier.fillMaxSize())
+
         else -> ErrorScreen(retryAction, modifier.fillMaxSize())
     }
 }
@@ -70,7 +73,11 @@ fun AmphibianDetailsCard(amphibian: Amphibian, modifier: Modifier = Modifier) {
             Text(
                 text = stringResource(R.string.amphibian_title, amphibian.name, amphibian.type),
                 modifier = modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                fontWeight = MaterialTheme.typography.headlineMedium.fontWeight
             )
 
             AsyncImage(
@@ -92,8 +99,25 @@ fun AmphibianDetailsCard(amphibian: Amphibian, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun LoadingScreen(modifier: Modifier) {
-    CircularProgressIndicator(1.5f)
+fun LoadingScreen() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(55.dp),
+            strokeWidth = 6.dp
+        )
+
+        Spacer(modifier = Modifier.size(16.dp))
+
+        Text(
+            text = "Loading...",
+            style = MaterialTheme.typography.bodyMedium,
+//          color = MaterialTheme.colorScheme.onSurface
+        )
+    }
+
 }
 
 @Composable
