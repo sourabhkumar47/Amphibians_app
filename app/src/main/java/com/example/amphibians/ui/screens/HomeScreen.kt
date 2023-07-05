@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,23 +29,21 @@ import com.example.amphibians.network.Amphibian
 
 @Composable
 fun HomeScreen(
-    amphibianUiState: AmphibianUiState,
+    amphibiansUiState: AmphibiansUiState,
     retryAction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    when (amphibianUiState) {
-        is AmphibianUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
-        is AmphibianUiState.Success -> AmphibiansListScreen(
-            amphibianUiState.amphibians, modifier.fillMaxWidth()
-        )
-
-        is AmphibianUiState.Error -> ErrorScreen(retryAction, modifier = modifier.fillMaxSize())
+    when (amphibiansUiState) {
+        is AmphibiansUiState.Loading -> LoadingScreen(modifier.fillMaxSize().size(200.dp))
+        is AmphibiansUiState.Success ->
+            AmphibiansListScreen(amphibiansUiState.amphibians, modifier.fillMaxSize())
+        else -> ErrorScreen(retryAction, modifier.fillMaxSize())
     }
 }
 
 
 @Composable
-private fun AmphibiansListScreen(amphibians: List<Amphibian>, modifier: Modifier = Modifier) {
+fun AmphibiansListScreen(amphibians: List<Amphibian>, modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(24.dp),
@@ -76,7 +75,7 @@ fun AmphibianDetailsCard(amphibian: Amphibian, modifier: Modifier = Modifier) {
 
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(amphibian.img_src)
+                    .data(amphibian.imgSrc)
                     .crossfade(true)
                     .build(),
                 contentDescription = null,
@@ -94,7 +93,7 @@ fun AmphibianDetailsCard(amphibian: Amphibian, modifier: Modifier = Modifier) {
 
 @Composable
 fun LoadingScreen(modifier: Modifier) {
-    CircularProgressIndicator()
+    CircularProgressIndicator(1.5f)
 }
 
 @Composable
